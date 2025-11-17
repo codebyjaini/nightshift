@@ -1,0 +1,155 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-primary-bg text-text-primary font-sans antialiased;
+    background: linear-gradient(135deg, #0B1120 0%, #0F1729 50%, #151B2E 100%);
+    background-attachment: fixed;
+  }
+
+  /* Enhanced focus indicators for accessibility */
+  *:focus-visible {
+    @apply outline-2 outline-offset-2 outline-accent-cyan;
+  }
+
+  /* Ensure keyboard focus is always visible */
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible,
+  [role="button"]:focus-visible,
+  [tabindex]:not([tabindex="-1"]):focus-visible {
+    @apply outline-2 outline-offset-2 outline-accent-cyan;
+  }
+
+  /* Skip to main content link for screen readers */
+  .skip-to-main {
+    @apply absolute -top-full left-0 bg-accent-cyan text-primary-bg px-4 py-2 z-50 transition-all;
+  }
+
+  .skip-to-main:focus {
+    @apply top-0;
+  }
+
+  /* Screen reader only content */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* Smooth scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-primary-navy;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-primary-border rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-accent-cyan;
+  }
+}
+
+@layer utilities {
+  /* Animation for success screen */
+  @keyframes scale-in {
+    from {
+      transform: scale(0);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  .animate-scale-in {
+    animation: scale-in 0.3s ease-out;
+  }
+
+  /* Cross-browser compatibility fixes */
+  
+  /* Fix for Safari input appearance */
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  textarea {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+
+  /* Fix for Safari button appearance */
+  button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+
+  /* Smooth scrolling for all browsers */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Fix for Firefox focus outline */
+  *::-moz-focus-inner {
+    border: 0;
+  }
+
+  /* Fix for IE11 flexbox bugs */
+  .flex {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+  }
+
+  /* Prevent text size adjustment on mobile Safari */
+  html {
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+  }
+
+  /* Fix for Safari backdrop-filter */
+  .backdrop-blur {
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+
+  /* Fix for older browsers that don't support gap */
+  @supports not (gap: 1rem) {
+    .flex > * + *,
+    .grid > * + * {
+      margin-left: 1rem;
+    }
+  }
+
+  /* Ensure images are responsive in all browsers */
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Fix for Edge legacy grid issues */
+  @supports (-ms-ime-align: auto) {
+    .grid {
+      display: -ms-grid;
+    }
+  }
+}
