@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NightShift MD - Login Diagnostic Tool</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #00d4aa 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.5rem;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #94a3b8;
+            margin-bottom: 30px;
+        }
+        
+        .section {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .section h2 {
+            color: #00d4aa;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .status {
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .status.loading {
+            background: rgba(59, 130, 246, 0.2);
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .status.success {
+            background: rgba(0, 212, 170, 0.2);
+            border-left: 4px solid #00d4aa;
+        }
+        
+        .status.error {
+            background: rgba(239, 68, 68, 0.2);
+            border-left: 4px solid #ef4444;
+        }
+        
+        .status.warning {
+            background: rgba(251, 191, 36, 0.2);
+            border-left: 4px solid #fbbf24;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #00d4aa 0%, #00b894 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 5px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 212, 170, 0.4);
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            border-radius: 8px;
+            color: #e2e8f0;
+            font-size: 1rem;
+            margin: 8px 0;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #00d4aa;
+        }
+        
+        label {
+            display: block;
+            color: #94a3b8;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+        
+        pre {
+            background: rgba(15, 23, 42, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .info-box {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .info-box h3 {
+            color: #3b82f6;
+            margin-bottom: 10px;
+        }
+        
+        .info-box ul {
+            margin-left: 20px;
+            color: #cbd5e1;
+        }
+        
+        .info-box li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 NightShift MD</h1>
+        <p class="subtitle">Login Diagnostic Tool</p>
+
+        <!-- Environment Check -->
+        <div class="section">
+            <h2>📋 Step 1: Environment Variables</h2>
+            <div id="env-status" class="status loading">Checking environment...</div>
+            <div id="env-details"></div>
+        </div>
+
+        <!-- Connection Test -->
+        <div class="section">
+            <h2>🔗 Step 2: Supabase Connection</h2>
+            <button onclick="testConnection()">Test Connection</button>
+            <div id="connection-status"></div>
+        </div>
+
+        <!-- Authentication Test -->
+        <div class="section">
+            <h2>🔐 Step 3: Test Login</h2>
+            <label for="email">Email:</label>
+            <input type="email" id="email" value="testdoctor@demo.com" placeholder="testdoctor@demo.com">
+            
+            <label for="password">Password:</label>
+            <input type="password" id="password" value="Test123!" placeholder="Test123!">
+            
+            <div class="button-group" style="margin-top: 15px;">
+                <button onclick="testLogin()">Test Login</button>
+                <button onclick="checkSession()">Check Session</button>
+                <button onclick="testSignOut()">Sign Out</button>
+            </div>
+            
+            <div id="auth-status"></div>
+        </div>
+
+        <!-- Troubleshooting Guide -->
+        <div class="section">
+            <h2>🛠️ Troubleshooting Guide</h2>
+            <div class="info-box">
+                <h3>If login fails, check these:</h3>
+                <ul>
+                    <li><strong>User doesn't exist:</strong> Go to Supabase Dashboard → Authentication → Users and create testdoctor@demo.com</li>
+                    <li><strong>Email not confirmed:</strong> Check "Auto Confirm User" when creating the user</li>
+                    <li><strong>Wrong credentials:</strong> Ensure password is exactly "Test123!" (case-sensitive)</li>
+                    <li><strong>Environment variables:</strong> Verify VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env</li>
+                    <li><strong>RLS policies:</strong> Run the fix-doctor-login.sql script in Supabase SQL Editor</li>
+                </ul>
+            </div>
+            
+            <div class="info-box">
+                <h3>Quick Fix Steps:</h3>
+                <ul>
+                    <li>1. Open Supabase Dashboard</li>
+                    <li>2. Go to Authentication → Users</li>
+                    <li>3. Click "Add user"</li>
+                    <li>4. Email: testdoctor@demo.com</li>
+                    <li>5. Password: Test123!</li>
+                    <li>6. ✅ Check "Auto Confirm User"</li>
+                    <li>7. Click "Create user"</li>
+                    <li>8. Test login again using this tool</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Your Supabase credentials from .env
+        const SUPABASE_URL = 'https://acgfrasgdxgcjcvumobg.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFjZ2ZyYXNnZHhnY2pjdnVtb2JnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMzNjA4ODMsImV4cCI6MjA3ODkzNjg4M30.nmmCtw1OiPfJrOcTzeY9m0gvjBYzbz_swG70UtXXGSE';
+        
+        let supabase;
+        
+        // Initialize Supabase client
+        function initSupabase() {
+            const envStatus = document.getElementById('env-status');
+            const envDetails = document.getElementById('env-details');
+            
+            if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+                envStatus.className = 'status error';
+                envStatus.innerHTML = '❌ Missing environment variables';
+                envDetails.innerHTML = '<pre>Please update SUPABASE_URL and SUPABASE_ANON_KEY in this file</pre>';
+                return false;
+            }
+            
+            try {
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+                    auth: {
+                        persistSession: true,
+                        autoRefreshToken: true,
+                        detectSessionInUrl: true,
+                        storage: window.localStorage,
+                    }
+                });
+                
+                envStatus.className = 'status success';
+                envStatus.innerHTML = '✅ Environment variables loaded successfully';
+                envDetails.innerHTML = `
+                    <pre>URL: ${SUPABASE_URL}
+Key: ${SUPABASE_ANON_KEY.substring(0, 30)}...${SUPABASE_ANON_KEY.substring(SUPABASE_ANON_KEY.length - 10)}</pre>
+                `;
+                return true;
+            } catch (error) {
+                envStatus.className = 'status error';
+                envStatus.innerHTML = '❌ Failed to initialize Supabase client';
+                envDetails.innerHTML = `<pre>${error.message}</pre>`;
+                return false;
+            }
+        }
+        
+        // Test Supabase connection
+        async function testConnection() {
+            if (!supabase) {
+                if (!initSupabase()) return;
+            }
+            
+            const statusDiv = document.getElementById('connection-status');
+            statusDiv.innerHTML = '<div class="status loading">🔄 Testing connection to Supabase...</div>';
+            
+            try {
+                // Try to query the patients table
+                const { data, error } = await supabase
+                    .from('patients')
+                    .select('count', { count: 'exact', head: true });
+                
+                if (error) {
+                    statusDiv.innerHTML = `
+                        <div class="status error">
+                            ❌ Connection failed: ${error.message}
+                            <pre>${JSON.stringify(error, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    statusDiv.innerHTML = `
+                        <div class="status success">
+                            ✅ Connection successful!<br>
+                            📊 Successfully connected to Supabase database<br>
+                            🔗 Patients table is accessible
+                        </div>
+                    `;
+                }
+            } catch (err) {
+                statusDiv.innerHTML = `
+                    <div class="status error">
+                        ❌ Unexpected error: ${err.message}
+                        <pre>${JSON.stringify(err, null, 2)}</pre>
+                    </div>
+                `;
+            }
+        }
+        
+        // Test login
+        async function testLogin() {
+            if (!supabase) {
+                if (!initSupabase()) return;
+            }
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const statusDiv = document.getElementById('auth-status');
+            
+            statusDiv.innerHTML = '<div class="status loading">🔄 Attempting to sign in...</div>';
+            
+            console.log('🔐 Login attempt:', { email, passwordLength: password.length });
+            
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email.trim(),
+                    password: password
+                });
+                
+                console.log('🔐 Login response:', { data, error });
+                
+                if (error) {
+                    let troubleshooting = '';
+                    
+                    if (error.message.includes('Invalid login credentials')) {
+                        troubleshooting = `
+                            <div class="info-box">
+                                <h3>⚠️ Common Causes:</h3>
+                                <ul>
+                                    <li>User doesn't exist in Supabase Auth</li>
+                                    <li>Wrong password</li>
+                                    <li>Email not confirmed</li>
+                                </ul>
+                                <h3>✅ Solution:</h3>
+                                <ul>
+                                    <li>1. Go to Supabase Dashboard → Authentication → Users</li>
+                                    <li>2. Check if testdoctor@demo.com exists</li>
+                                    <li>3. If not, click "Add user" and create it</li>
+                                    <li>4. Make sure to check "Auto Confirm User"</li>
+                                </ul>
+                            </div>
+                        `;
+                    }
+                    
+                    statusDiv.innerHTML = `
+                        <div class="status error">
+                            ❌ Authentication failed: ${error.message}
+                            <pre>${JSON.stringify(error, null, 2)}</pre>
+                        </div>
+                        ${troubleshooting}
+                    `;
+                } else {
+                    statusDiv.innerHTML = `
+                        <div class="status success">
+                            ✅ Authentication successful!<br>
+                            👤 User ID: ${data.user?.id}<br>
+                            📧 Email: ${data.user?.email}<br>
+                            🎫 Session: ${data.session ? 'Active' : 'None'}<br>
+                            ⏰ Expires: ${data.session ? new Date(data.session.expires_at * 1000).toLocaleString() : 'N/A'}<br>
+                            <br>
+                            <strong>✅ Login is working! You can now use the app.</strong>
+                        </div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (err) {
+                console.error('🔐 Login exception:', err);
+                statusDiv.innerHTML = `
+                    <div class="status error">
+                        ❌ Unexpected error: ${err.message}
+                        <pre>${JSON.stringify(err, null, 2)}</pre>
+                    </div>
+                `;
+            }
+        }
+        
+        // Check current session
+        async function checkSession() {
+            if (!supabase) {
+                if (!initSupabase()) return;
+            }
+            
+            const statusDiv = document.getElementById('auth-status');
+            statusDiv.innerHTML = '<div class="status loading">🔄 Checking session...</div>';
+            
+            try {
+                const { data: { session }, error } = await supabase.auth.getSession();
+                
+                if (error) {
+                    statusDiv.innerHTML = `
+                        <div class="status error">
+                            ❌ Session check failed: ${error.message}
+                        </div>
+                    `;
+                } else if (session) {
+                    statusDiv.innerHTML = `
+                        <div class="status success">
+                            ✅ Active session found!<br>
+                            👤 User: ${session.user?.email}<br>
+                            🎫 Session ID: ${session.access_token.substring(0, 20)}...<br>
+                            ⏰ Expires: ${new Date(session.expires_at * 1000).toLocaleString()}
+                        </div>
+                        <pre>${JSON.stringify(session, null, 2)}</pre>
+                    `;
+                } else {
+                    statusDiv.innerHTML = `
+                        <div class="status warning">
+                            ⚠️ No active session found<br>
+                            Please sign in first
+                        </div>
+                    `;
+                }
+            } catch (err) {
+                statusDiv.innerHTML = `
+                    <div class="status error">
+                        ❌ Unexpected error: ${err.message}
+                    </div>
+                `;
+            }
+        }
+        
+        // Sign out
+        async function testSignOut() {
+            if (!supabase) {
+                if (!initSupabase()) return;
+            }
+            
+            const statusDiv = document.getElementById('auth-status');
+            statusDiv.innerHTML = '<div class="status loading">🔄 Signing out...</div>';
+            
+            try {
+                const { error } = await supabase.auth.signOut();
+                
+                if (error) {
+                    statusDiv.innerHTML = `
+                        <div class="status error">
+                            ❌ Sign out failed: ${error.message}
+                        </div>
+                    `;
+                } else {
+                    statusDiv.innerHTML = `
+                        <div class="status success">
+                            ✅ Successfully signed out
+                        </div>
+                    `;
+                }
+            } catch (err) {
+                statusDiv.innerHTML = `
+                    <div class="status error">
+                        ❌ Unexpected error: ${err.message}
+                    </div>
+                `;
+            }
+        }
+        
+        // Initialize on page load
+        window.onload = function() {
+            initSupabase();
+        };
+    </script>
+</body>
+</html>
