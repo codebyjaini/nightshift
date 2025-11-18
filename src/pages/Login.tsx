@@ -71,7 +71,7 @@ function Login() {
                 id="email"
                 type="email"
                 value={email}
-                onChange={(e: any) => setEmail(e.target.value)}
+                onChange={(value: string | number) => setEmail(String(value))}
                 placeholder="doctor@example.com"
                 required
                 disabled={loading}
@@ -87,7 +87,7 @@ function Login() {
                 id="password"
                 type="password"
                 value={password}
-                onChange={(e: any) => setPassword(e.target.value)}
+                onChange={(value: string | number) => setPassword(String(value))}
                 placeholder="••••••••"
                 required
                 disabled={loading}
