@@ -1,6 +1,8 @@
-# NightShift MD
+## 🌙 NightShift MD
 
-Emergency triage system for streamlined patient intake and doctor monitoring.
+A modern emergency triage system for streamlined patient intake, doctor monitoring, and real-time medical workflow.
+
+NightShift MD bridges the gap between frontline medical staff and on-call doctors, ensuring every patient is assessed quickly, safely, and efficiently powered by a robust modern tech stack.
 
 ## Tech Stack
 
@@ -10,7 +12,50 @@ Emergency triage system for streamlined patient intake and doctor monitoring.
 - **Backend**: Supabase (PostgreSQL, Real-time, Storage)
 - **Routing**: React Router v6
 
-## Getting Started
+## 🚀Features
+
+### 👨‍⚕️ Doctor Dashboard
+
+•	Live patient list
+
+•	Risk-level color coding
+
+•	Patient timeline & history
+
+•	Contact patient directly from the dashboard (Call button on detail card)
+
+•	Realtime updates (no refresh required)
+
+### 📝 Patient Intake Form
+
+•	Minimal, fast, nurse-friendly
+
+•	Auto-detect risk level
+
+•	Stores medical history + vitals
+
+•	Secure access with RLS
+
+### 🗂️ Smart Patient History
+
+•	Timeline view
+
+•	Previous visits
+
+•	Past triage levels
+
+•	Doctor notes
+
+### 🎨 UI / UX
+•	Dark theme optimized for night-shift screens
+
+•	Clean neon accent color (#00E5A5)
+
+•	Medical-grade readability
+
+•	Fully responsive
+
+## 🔧 Getting Started
 
 ### Prerequisites
 
@@ -67,7 +112,7 @@ Run tests:
 npm run test
 ```
 
-## Deployment
+## 🎯 Deployment
 
 ### 🚀 Ready to Deploy?
 
@@ -104,7 +149,7 @@ npm run preview        # Test locally
 npm run predeploy      # Run pre-deployment checks
 ```
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 src/
@@ -121,7 +166,7 @@ src/
 └── styles/          # Global styles
 ```
 
-## Design System
+## 🎨 Design System
 
 ### Colors
 
@@ -137,6 +182,24 @@ src/
 - **Font Family**: Inter (sans-serif)
 - **Monospace**: JetBrains Mono
 
-## License
+## 🤝 Special Thanks
+### 🛠️ Kiro — Backend Architecture & Realtime Sync Support
+
+NightShift MD’s smooth integration with Supabase, real-time triage updates, optimized table structures, and secure RLS-based permissions were made possible through backend collaboration and improvements by Kiro.
+
+His contribution ensures:
+
+•	Stable doctor–patient sync
+
+•	Secure medical data flow
+
+•	Fast and reliable backend operations
+
+•	Consistent feature implementation
+
+Thank you, Kiro, for helping make the system more solid, scalable, and production-ready.
+
+
+## 🔐License
 
 Private - All rights reserved
