@@ -31,6 +31,8 @@ import { useImageUpload } from '../hooks/useImageUpload';
 interface FormData {
   name: string;
   age: string | number;
+  phone: string;
+  gender: string;
   symptoms: string;
   painLevel: string;
   imageFile: File | null;
@@ -53,6 +55,8 @@ function PatientTriage() {
   const [formData, setFormData] = useState<FormData>({
     name: '',
     age: '',
+    phone: '',
+    gender: '',
     symptoms: '',
     painLevel: '',
     imageFile: null,
@@ -146,6 +150,8 @@ function PatientTriage() {
       const patientData = {
         name: String(formData.name).trim(),
         age: ageNumber,
+        phone: String(formData.phone).trim(),
+        gender: String(formData.gender).trim(),
         symptoms: String(formData.symptoms).trim(),
         pain_level: formData.painLevel as 'Low' | 'Medium' | 'High',
         risk_level: riskLevel as 'Low' | 'Medium' | 'Critical',
@@ -185,6 +191,8 @@ function PatientTriage() {
     setFormData({
       name: '',
       age: '',
+      phone: '',
+      gender: '',
       symptoms: '',
       painLevel: '',
       imageFile: null,

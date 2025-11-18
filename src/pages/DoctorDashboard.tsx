@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import usePatients from '../hooks/usePatients'
 import useRealtimePatients from '../hooks/useRealtimePatients'
 import type { Patient } from '../hooks/usePatients'
@@ -16,8 +17,11 @@ import Modal from '../components/ui/Modal'
 // @ts-ignore - JSX component without types
 import NetworkErrorBanner from '../components/ui/NetworkErrorBanner'
 import { updateTreatmentStatus, markPatientContacted } from '../services/patientService'
+// @ts-ignore - JS module without types
+import { signOut } from '../services/authService'
 
 function DoctorDashboard() {
+  const navigate = useNavigate()
   const [filter, setFilter] = useState<'all' | 'treated' | 'untreated'>('all')
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null)
   const [updatingStatus, setUpdatingStatus] = useState(false)
@@ -27,6 +31,15 @@ function DoctorDashboard() {
   
   // Use real-time hook to keep patient list updated
   const patients = useRealtimePatients(initialPatients)
+
+  const handleLogout = async () => {
+    try {
+      await signOut()
+      navigate('/login')
+    } catch (error) {
+      console.error('Logout error:', error)
+    }
+  }
 
   const handlePatientClick = (patient: Patient) => {
     setSelectedPatient(patient)
@@ -133,28 +146,51 @@ function DoctorDashboard() {
           <h1 className="text-3xl font-bold bg-gradient-to-r from-accent-cyan to-accent-purple bg-clip-text text-transparent">
             Doctor Dashboard
           </h1>
-          <Button
-            variant="secondary"
-            onClick={refetch}
-            disabled={loading}
-            aria-label="Refresh patient list"
-          >
-            <svg
-              className="w-4 h-4 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
+          <div className="flex gap-3">
+            <Button
+              variant="secondary"
+              onClick={refetch}
+              disabled={loading}
+              aria-label="Refresh patient list"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-              />
-            </svg>
-            Refresh
-          </Button>
+              <svg
+                className="w-4 h-4 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+              Refresh
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={handleLogout}
+              aria-label="Logout"
+            >
+              <svg
+                className="w-4 h-4 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                />
+              </svg>
+              Logout
+            </Button>
+          </div>
         </header>
 
         {/* Error message */}

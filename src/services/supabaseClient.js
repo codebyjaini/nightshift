@@ -14,7 +14,10 @@ if (!supabaseUrl || !supabaseAnonKey) {
 // Create and export the Supabase client
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
-    persistSession: false, // We're not using authentication yet
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    storage: window.localStorage,
   },
   realtime: {
     params: {

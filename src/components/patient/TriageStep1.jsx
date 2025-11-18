@@ -15,12 +15,37 @@ import { validateName, validateAge } from '../../utils/validation';
 const TriageStep1 = ({ formData, onUpdate, onNext }) => {
   const [errors, setErrors] = useState({
     name: '',
-    age: ''
+    age: '',
+    phone: '',
+    gender: ''
   });
   const [touched, setTouched] = useState({
     name: false,
-    age: false
+    age: false,
+    phone: false,
+    gender: false
   });
+
+  // Validate phone number
+  const validatePhone = (phone) => {
+    if (!phone || phone.trim() === '') {
+      return { valid: false, error: 'Phone number is required' };
+    }
+    // Basic phone validation - at least 10 digits
+    const phoneDigits = phone.replace(/\D/g, '');
+    if (phoneDigits.length < 10) {
+      return { valid: false, error: 'Please enter a valid phone number' };
+    }
+    return { valid: true, error: '' };
+  };
+
+  // Validate gender
+  const validateGender = (gender) => {
+    if (!gender || gender.trim() === '') {
+      return { valid: false, error: 'Please select a gender' };
+    }
+    return { valid: true, error: '' };
+  };
 
   // Handle field blur for validation
   const handleBlur = (field) => {
@@ -32,6 +57,12 @@ const TriageStep1 = ({ formData, onUpdate, onNext }) => {
     } else if (field === 'age') {
       const validation = validateAge(formData.age);
       setErrors(prev => ({ ...prev, age: validation.valid ? '' : validation.error }));
+    } else if (field === 'phone') {
+      const validation = validatePhone(formData.phone);
+      setErrors(prev => ({ ...prev, phone: validation.valid ? '' : validation.error }));
+    } else if (field === 'gender') {
+      const validation = validateGender(formData.gender);
+      setErrors(prev => ({ ...prev, gender: validation.valid ? '' : validation.error }));
     }
   };
 
@@ -47,6 +78,12 @@ const TriageStep1 = ({ formData, onUpdate, onNext }) => {
       } else if (field === 'age') {
         const validation = validateAge(value);
         setErrors(prev => ({ ...prev, age: validation.valid ? '' : validation.error }));
+      } else if (field === 'phone') {
+        const validation = validatePhone(value);
+        setErrors(prev => ({ ...prev, phone: validation.valid ? '' : validation.error }));
+      } else if (field === 'gender') {
+        const validation = validateGender(value);
+        setErrors(prev => ({ ...prev, gender: validation.valid ? '' : validation.error }));
       }
     }
   };
@@ -56,17 +93,21 @@ const TriageStep1 = ({ formData, onUpdate, onNext }) => {
     // Validate all fields
     const nameValidation = validateName(formData.name);
     const ageValidation = validateAge(formData.age);
+    const phoneValidation = validatePhone(formData.phone);
+    const genderValidation = validateGender(formData.gender);
     
     const newErrors = {
       name: nameValidation.valid ? '' : nameValidation.error,
-      age: ageValidation.valid ? '' : ageValidation.error
+      age: ageValidation.valid ? '' : ageValidation.error,
+      phone: phoneValidation.valid ? '' : phoneValidation.error,
+      gender: genderValidation.valid ? '' : genderValidation.error
     };
     
     setErrors(newErrors);
-    setTouched({ name: true, age: true });
+    setTouched({ name: true, age: true, phone: true, gender: true });
     
     // Only proceed if all validations pass
-    if (nameValidation.valid && ageValidation.valid) {
+    if (nameValidation.valid && ageValidation.valid && phoneValidation.valid && genderValidation.valid) {
       onNext();
     }
   };
@@ -75,7 +116,9 @@ const TriageStep1 = ({ formData, onUpdate, onNext }) => {
   const isValid = () => {
     const nameValidation = validateName(formData.name);
     const ageValidation = validateAge(formData.age);
-    return nameValidation.valid && ageValidation.valid;
+    const phoneValidation = validatePhone(formData.phone);
+    const genderValidation = validateGender(formData.gender);
+    return nameValidation.valid && ageValidation.valid && phoneValidation.valid && genderValidation.valid;
   };
 
   return (
@@ -160,6 +203,58 @@ const TriageStep1 = ({ formData, onUpdate, onNext }) => {
               </svg>
             }
           />
+
+          {/* Phone Input */}
+          <Input
+            type="tel"
+            label="Phone Number"
+            name="phone"
+            value={formData.phone || ''}
+            onChange={(value) => handleChange('phone', value)}
+            onBlur={() => handleBlur('phone')}
+            error={touched.phone ? errors.phone : ''}
+            placeholder="(555) 123-4567"
+            required
+            autoComplete="tel"
+            icon={
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>
+            }
+          />
+
+          {/* Gender Select */}
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-semibold text-text-secondary" htmlFor="gender">
+              Gender
+              <span className="text-risk-critical ml-1" aria-label="required">*</span>
+            </label>
+            <div className="relative">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-text-dim">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <select
+                id="gender"
+                name="gender"
+                value={formData.gender || ''}
+                onChange={(e) => handleChange('gender', e.target.value)}
+                onBlur={() => handleBlur('gender')}
+                className="w-full px-4 py-3.5 min-h-[48px] bg-primary-navy/50 border-2 rounded-xl text-text-primary transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-accent-cyan/50 focus:border-accent-cyan disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm border-primary-border hover:border-accent-cyan/30 pl-12"
+                required
+              >
+                <option value="">Select gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+                <option value="prefer_not_to_say">Prefer not to say</option>
+              </select>
+            </div>
+            {touched.gender && errors.gender && (
+              <p className="text-sm text-risk-critical mt-1">{errors.gender}</p>
+            )}
+          </div>
         </div>
 
         {/* Navigation Buttons */}

@@ -1,6 +1,7 @@
+import { useState } from 'react'
 import Badge from '../ui/Badge'
 import Button from '../ui/Button'
-import { Phone, Check } from 'lucide-react'
+import { Phone, Check, Copy } from 'lucide-react'
 
 /**
  * Format timestamp to readable format
@@ -53,6 +54,28 @@ const PatientDetail = ({
     created_at 
   } = patient
 
+  const [copied, setCopied] = useState(false)
+
+  const handleCallPatient = () => {
+    if (!phone) return
+
+    // Check if mobile device
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+
+    if (isMobile) {
+      // On mobile, open dialer
+      window.location.href = `tel:${phone}`
+    } else {
+      // On desktop, copy to clipboard
+      navigator.clipboard.writeText(phone).then(() => {
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+      }).catch(err => {
+        console.error('Failed to copy:', err)
+      })
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* Header Section */}
@@ -87,19 +110,39 @@ const PatientDetail = ({
 
       {/* Contact Information Section */}
       <section aria-labelledby="contact-heading">
-        <h4 id="contact-heading" className="text-lg font-semibold text-text-primary mb-2">
+        <h4 id="contact-heading" className="text-lg font-semibold text-text-primary mb-3">
           Contact Information
         </h4>
-        <div className="flex items-center gap-3">
-          <a
-            href={`tel:${phone}`}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-accent-cyan hover:bg-accent-teal text-white rounded-lg transition-colors"
-            aria-label={`Call ${name} at ${phone}`}
-          >
-            <Phone className="w-4 h-4" aria-hidden="true" />
-            Call Now
-          </a>
-          <span className="text-text-secondary">{phone}</span>
+        <div className="bg-primary-bg p-4 rounded-lg border border-primary-border">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <Phone className="w-5 h-5 text-accent-cyan" aria-hidden="true" />
+              <div>
+                <p className="text-sm text-text-muted">Phone Number</p>
+                <p className="text-lg font-semibold text-text-primary">{phone || 'Not provided'}</p>
+              </div>
+            </div>
+            {phone && (
+              <Button
+                variant="primary"
+                onClick={handleCallPatient}
+                className="flex items-center gap-2"
+                aria-label={`Call ${name}`}
+              >
+                {copied ? (
+                  <>
+                    <Check className="w-4 h-4" aria-hidden="true" />
+                    Copied!
+                  </>
+                ) : (
+                  <>
+                    <Phone className="w-4 h-4" aria-hidden="true" />
+                    Call Patient
+                  </>
+                )}
+              </Button>
+            )}
+          </div>
         </div>
       </section>
 

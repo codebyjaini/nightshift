@@ -1,5 +1,5 @@
 export interface InputProps {
-  type?: 'text' | 'number' | 'textarea';
+  type?: 'text' | 'number' | 'textarea' | 'email' | 'password' | 'tel';
   label?: string;
   value: string | number;
   onChange: (value: string | number) => void;
