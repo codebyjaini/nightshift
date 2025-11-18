@@ -21,21 +21,36 @@ function Login() {
     setError(null)
     setLoading(true)
 
+    console.log('🔐 Attempting login with:', { email, passwordLength: password.length })
+
     try {
       const { data, error: signInError } = await signIn(email, password)
 
+      console.log('🔐 Login response:', { 
+        hasData: !!data, 
+        hasSession: !!data?.session,
+        hasUser: !!data?.user,
+        error: signInError 
+      })
+
       if (signInError) {
+        console.error('🔐 Sign in error:', signInError)
         setError(signInError.message || 'Failed to sign in')
         setLoading(false)
         return
       }
 
       if (data?.session) {
+        console.log('🔐 Login successful! Redirecting to dashboard...')
         // Successfully signed in, redirect to dashboard
         navigate('/doctor/dashboard')
+      } else {
+        console.error('🔐 No session returned after login')
+        setError('Login failed - no session created')
+        setLoading(false)
       }
     } catch (err) {
-      console.error('Login error:', err)
+      console.error('🔐 Login exception:', err)
       setError('An unexpected error occurred')
       setLoading(false)
     }
