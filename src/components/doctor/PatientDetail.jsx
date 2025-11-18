@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Badge from '../ui/Badge'
 import Button from '../ui/Button'
-import { Phone, Check, Copy } from 'lucide-react'
+import { Phone, Check, Trash2 } from 'lucide-react'
 
 /**
  * Format timestamp to readable format
@@ -28,18 +28,22 @@ const formatTimestamp = (timestamp) => {
  * @param {Function} props.onMarkTreated - Handler for marking patient as treated
  * @param {Function} props.onMarkNotTreated - Handler for marking patient as not treated
  * @param {Function} props.onMarkContacted - Handler for marking patient as contacted
+ * @param {Function} props.onDelete - Handler for deleting patient record
  * @param {Function} props.onClose - Handler for closing the detail view
  * @param {boolean} props.loading - Loading state for treatment status update
  * @param {boolean} props.contactLoading - Loading state for contact status update
+ * @param {boolean} props.deleteLoading - Loading state for delete operation
  */
 const PatientDetail = ({ 
   patient, 
   onMarkTreated, 
   onMarkNotTreated, 
   onMarkContacted,
+  onDelete,
   onClose,
   loading = false,
-  contactLoading = false
+  contactLoading = false,
+  deleteLoading = false
 }) => {
   const { 
     name, 
@@ -210,7 +214,7 @@ const PatientDetail = ({
           <Button
             variant="secondary"
             onClick={onMarkNotTreated}
-            disabled={loading || contactLoading}
+            disabled={loading || contactLoading || deleteLoading}
             loading={loading}
             className="flex-1"
             aria-label={`Mark ${name} as not treated`}
@@ -221,7 +225,7 @@ const PatientDetail = ({
           <Button
             variant="primary"
             onClick={onMarkTreated}
-            disabled={loading || contactLoading}
+            disabled={loading || contactLoading || deleteLoading}
             loading={loading}
             className="flex-1"
             aria-label={`Mark ${name} as treated`}
@@ -233,7 +237,7 @@ const PatientDetail = ({
           <Button
             variant="secondary"
             onClick={onMarkContacted}
-            disabled={contactLoading || loading}
+            disabled={contactLoading || loading || deleteLoading}
             loading={contactLoading}
             className="flex-1"
             aria-label={`Mark ${name} as contacted`}
@@ -243,9 +247,20 @@ const PatientDetail = ({
           </Button>
         )}
         <Button
+          variant="danger"
+          onClick={onDelete}
+          disabled={loading || contactLoading || deleteLoading}
+          loading={deleteLoading}
+          className="flex-1"
+          aria-label={`Delete ${name}'s record`}
+        >
+          <Trash2 className="w-4 h-4 mr-2" aria-hidden="true" />
+          Delete
+        </Button>
+        <Button
           variant="ghost"
           onClick={onClose}
-          disabled={loading || contactLoading}
+          disabled={loading || contactLoading || deleteLoading}
           className="flex-1"
           aria-label="Close patient details"
         >

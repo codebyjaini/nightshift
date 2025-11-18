@@ -177,6 +177,32 @@ export const markPatientContacted = async (patientId, doctorId) => {
 };
 
 /**
+ * Delete a patient record permanently
+ * @param {string} patientId - Patient UUID
+ * @returns {Promise<{data: Object|null, error: Error|null}>}
+ */
+export const deletePatient = async (patientId) => {
+  try {
+    const { data, error } = await supabase
+      .from('patients')
+      .delete()
+      .eq('id', patientId)
+      .select()
+      .single()
+
+    if (error) {
+      const errorInfo = handleError(error, 'delete patient record')
+      return { data: null, error: { ...error, userMessage: errorInfo.message, canRetry: errorInfo.canRetry } }
+    }
+
+    return { data: { id: data.id }, error: null }
+  } catch (error) {
+    const errorInfo = handleError(error, 'delete patient record')
+    return { data: null, error: { message: errorInfo.message, canRetry: errorInfo.canRetry } }
+  }
+}
+
+/**
  * Subscribe to real-time changes on the patients table
  * @param {Function} callback - Callback function to handle real-time events
  * @returns {Object} Supabase subscription object
@@ -221,6 +247,7 @@ export const patientService = {
   getPatients,
   updateTreatmentStatus,
   markPatientContacted,
+  deletePatient,
   subscribeToPatients,
   unsubscribeFromPatients,
 }

@@ -5,9 +5,11 @@ export interface PatientDetailProps {
   onMarkTreated: () => void
   onMarkNotTreated: () => void
   onMarkContacted: () => void
+  onDelete: () => void
   onClose: () => void
   loading?: boolean
   contactLoading?: boolean
+  deleteLoading?: boolean
 }
 
 declare const PatientDetail: React.FC<PatientDetailProps>

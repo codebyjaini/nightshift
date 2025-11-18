@@ -50,6 +50,11 @@ export function updateTreatmentStatus(patientId: string, treated: boolean): Prom
 export function markPatientContacted(patientId: string, doctorId: string): Promise<ServiceResponse<Patient>>;
 
 /**
+ * Delete a patient record permanently
+ */
+export function deletePatient(patientId: string): Promise<ServiceResponse<{ id: string }>>;
+
+/**
  * Subscribe to real-time changes on the patients table
  */
 export function subscribeToPatients(callback: (payload: any) => void): any;
@@ -67,6 +72,7 @@ export const patientService: {
   getPatients: typeof getPatients;
   updateTreatmentStatus: typeof updateTreatmentStatus;
   markPatientContacted: typeof markPatientContacted;
+  deletePatient: typeof deletePatient;
   subscribeToPatients: typeof subscribeToPatients;
   unsubscribeFromPatients: typeof unsubscribeFromPatients;
 };
