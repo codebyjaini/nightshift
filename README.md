@@ -202,4 +202,5 @@ Thank you, Kiro, for helping make the system more solid, scalable, and productio
 
 ## 🔐License
 
-Private - All rights reserved
+NightShift MD is fully open source and released under the MIT License.
+This repository includes a LICENSE file containing the complete MIT License text, making it publicly visible and automatically detectable by GitHub.
